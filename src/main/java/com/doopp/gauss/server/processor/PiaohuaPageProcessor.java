@@ -11,16 +11,28 @@ public class PiaohuaPageProcessor implements PageProcessor {
 
     @Override
     public void process(Page page) {
-        // https://www.piaohua.com/html/juqing/2018/0521/33706.html
-        page.addTargetRequests(page.getHtml().links().regex("https://www\\.piaohua\\.com/html/.+").all());
-        page.putField("type", page.getUrl().regex("https://www\\.piaohua\\.com/html/(\\w+)/\\d+").toString());
-        page.putField("name", page.getHtml().regex("<title>(.+)下载_迅雷下载_免费下载_飘花电影网</title>").toString());
-        if (page.getResultItems().get("name")==null) {
+        // https://www.piaohua.com/html/kehuan/2018/0420/33577.html
+        // page.addTargetRequests(page.getHtml().links().regex("(https://www\\.piaohua\\.com/\\w+/\\w+/\\d+/\\d+/\\d+\\.html)").all());
+        page.addTargetRequests(page.getHtml().links().regex("(https://www\\.piaohua\\.com/html/\\w+/.+)").all());
+        // page.addTargetRequests(page.getHtml().links().all());
+
+        // https://www.piaohua.com/html/kehuan/2018/0518/33697.html
+        page.putField("type", page.getUrl().regex("https://www\\.piaohua\\.com/html/(\\w+)/.+").toString());
+        // page.putField("author", page.getUrl().regex("https://www\\.piaohua\\.com/(\\w+)/.*").toString());
+
+        // <title>陆地空谷下载_迅雷下载_免费下载_飘花电影网</title>
+        page.putField("name", page.getHtml().regex("<title>(.+)下载_迅雷.+</title>").toString());
+        // page.putField("name", page.getHtml().xpath("//h1[@class='public']/strong/a/text()").toString());
+        if (page.getResultItems().get("name")==null){
             page.setSkip(true);
         }
-        page.putField("cover", page.getHtml().regex("<div id=\"showinfo\" [^>]+>.+?<img [^>]+ src=\"([^\"]+)\"").toString());
-        // page.putField("resource", page.getHtml().regex("<table bgcolor=\"#ff8c00\" .+?<a href=\"([^\"]+)\"").toString());
-        page.putField("resource_html", page.getHtml().regex("<div class=\"play-list-box down-list-box\">.+?(<table bgcolor=\"#ff8c00\" [^>]+>.+</table>).+?</div>").toString());
+        // page.putField("readme", page.getHtml().xpath("//div[@id='readme']/tidyText()"));
+
+        // 下载地址和剧情：<br />
+        // <img border="0" src="http://img04.taobaocdn.com/imgextra/i4/229823360/T2VAjUXddaXXXXXXXX_!!229823360.jpg" /><br />
+        page.putField("cover", page.getHtml().regex("<div id=\"showinfo\" .+?<img [^>]+ src=\"([^\"]+)\"").toString());
+        // page.putField("cover", page.getHtml().xpath("//div[@id='showinfo']/img/@src"));
+        page.putField("resource_html", page.getHtml().regex("(<table bgcolor=\"#ff8c00\" [^>]+>.+?</table>)+").toString());
     }
 
     @Override
