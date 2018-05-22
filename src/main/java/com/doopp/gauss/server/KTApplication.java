@@ -1,6 +1,6 @@
 package com.doopp.gauss.server;
 
-import com.doopp.gauss.server.dao.PageDao;
+import com.doopp.gauss.server.dao.MovieDao;
 import com.doopp.gauss.server.module.ApplicationModule;
 import com.doopp.gauss.server.application.ApplicationProperties;
 import com.doopp.gauss.server.database.HikariDataSourceProvider;
@@ -30,7 +30,7 @@ public class KTApplication {
             install(JdbcHelper.MySQL);
             bindDataSourceProviderType(HikariDataSourceProvider.class);
             bindTransactionFactoryType(JdbcTransactionFactory.class);
-            addMapperClass(PageDao.class);
+            addMapperClass(MovieDao.class);
             Names.bindProperties(binder(), new ApplicationProperties());
         }
     }

@@ -1,11 +1,25 @@
 package com.doopp.gauss.server.processor;
 
+import com.doopp.gauss.server.dao.MovieDao;
+import com.doopp.gauss.server.entity.Movie;
+import com.doopp.gauss.server.util.IdWorker;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
 
 public class PiaohuaPageProcessor implements PageProcessor {
+
+    @Inject
+    private Injector injector;
+
+    @Inject
+    private MovieDao movieDao;
+
+    @Inject
+    private IdWorker idWorker;
 
     private Site site = Site.me().setRetryTimes(3).setSleepTime(100);
 
@@ -33,6 +47,24 @@ public class PiaohuaPageProcessor implements PageProcessor {
         page.putField("cover", page.getHtml().regex("<div id=\"showinfo\" .+?<img [^>]+ src=\"([^\"]+)\"").toString());
         // page.putField("cover", page.getHtml().xpath("//div[@id='showinfo']/img/@src"));
         page.putField("resource_html", page.getHtml().regex("(<table bgcolor=\"#ff8c00\" [^>]+>.+?</table>)+").toString());
+
+        String from_url = page.getUrl().get();
+        String name = page.getResultItems().get("name");
+        String type = page.getResultItems().get("type");
+        String cover = page.getResultItems().get("cover");
+        String resource_html = page.getResultItems().get("resource_html");
+        if (name!=null && cover!=null) {
+            Movie movie = new Movie() {{
+                setId(idWorker.nextId());
+                setName(name);
+                setCover(cover);
+                setType(type);
+                setFrom_url(from_url);
+                setIntro("");
+                setDownload_links(resource_html);
+            }};
+            movieDao.create(movie);
+        }
     }
 
     @Override
@@ -41,6 +73,6 @@ public class PiaohuaPageProcessor implements PageProcessor {
     }
 
     public void run() {
-        Spider.create(new PiaohuaPageProcessor()).addUrl("https://www.piaohua.com/").thread(5).run();
+        Spider.create(injector.getInstance(PiaohuaPageProcessor.class)).addUrl("https://www.piaohua.com/").thread(5).run();
     }
 }

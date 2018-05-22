@@ -3,7 +3,7 @@ package com.doopp.gauss.server.entity;
 import lombok.Data;
 
 @Data
-public class page {
+public class Movie {
 
     private Long id;
 
@@ -17,7 +17,7 @@ public class page {
 
     private String intro;
 
-    private String resource;
+    private String download_links;
 
     private String created_at;
 
