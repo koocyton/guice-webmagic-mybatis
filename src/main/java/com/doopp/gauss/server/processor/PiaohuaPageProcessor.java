@@ -10,6 +10,8 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
 
+import java.util.List;
+
 public class PiaohuaPageProcessor implements PageProcessor {
 
     @Inject
@@ -46,13 +48,19 @@ public class PiaohuaPageProcessor implements PageProcessor {
         // <img border="0" src="http://img04.taobaocdn.com/imgextra/i4/229823360/T2VAjUXddaXXXXXXXX_!!229823360.jpg" /><br />
         page.putField("cover", page.getHtml().regex("<div id=\"showinfo\" .+?<img [^>]+ src=\"([^\"]+)\"").toString());
         // page.putField("cover", page.getHtml().xpath("//div[@id='showinfo']/img/@src"));
-        page.putField("resource_html", page.getHtml().regex("(<table bgcolor=\"#ff8c00\" [^>]+>.+?</table>)+").toString());
+        page.putField("resource", page.getHtml().regex("<a href=\"([magnet|ftp][^\"]+)\"").all());
 
         String from_url = page.getUrl().get();
         String name = page.getResultItems().get("name");
         String type = page.getResultItems().get("type");
         String cover = page.getResultItems().get("cover");
-        String resource_html = page.getResultItems().get("resource_html");
+        List<String> resource = page.getResultItems().get("resource");
+
+        for (String aResource : resource) {
+            System.out.print("\n" + aResource);
+        }
+
+        /*
         if (name!=null && cover!=null) {
             Movie movie = new Movie() {{
                 setId(idWorker.nextId());
@@ -65,6 +73,7 @@ public class PiaohuaPageProcessor implements PageProcessor {
             }};
             movieDao.create(movie);
         }
+        */
     }
 
     @Override
