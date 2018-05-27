@@ -4,6 +4,7 @@ import com.doopp.gauss.server.dao.MovieDao;
 import com.doopp.gauss.server.module.ApplicationModule;
 import com.doopp.gauss.server.application.ApplicationProperties;
 import com.doopp.gauss.server.database.HikariDataSourceProvider;
+import com.doopp.gauss.server.processor.DyttPageProcessor;
 import com.doopp.gauss.server.processor.PiaohuaPageProcessor;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -22,6 +23,8 @@ public class KTApplication {
         );
         final PiaohuaPageProcessor processor = injector.getInstance(PiaohuaPageProcessor.class);
         processor.run();
+        final DyttPageProcessor processor2 = injector.getInstance(DyttPageProcessor.class);
+        processor2.run();
     }
 
     private static class myBatisModule extends MyBatisModule {
@@ -30,6 +33,7 @@ public class KTApplication {
             install(JdbcHelper.MySQL);
             bindDataSourceProviderType(HikariDataSourceProvider.class);
             bindTransactionFactoryType(JdbcTransactionFactory.class);
+            // addMapperClasses("com.doopp.gauss.server.dao");
             addMapperClass(MovieDao.class);
             Names.bindProperties(binder(), new ApplicationProperties());
         }

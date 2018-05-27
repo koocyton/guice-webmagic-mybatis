@@ -38,7 +38,7 @@ dependencies {
     // compile 'org.freemarker:freemarker:2.3.23'
 
     // JSON
-    // compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.google.code.gson:gson:2.8.2'
 
     compileOnly 'org.projectlombok:lombok:1.16.18'
 

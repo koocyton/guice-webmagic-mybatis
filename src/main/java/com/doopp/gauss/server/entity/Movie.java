@@ -17,7 +17,7 @@ public class Movie {
 
     private String intro;
 
-    private String download_links;
+    private String resources;
 
     private String created_at;
 

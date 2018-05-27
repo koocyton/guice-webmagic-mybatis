@@ -3,6 +3,7 @@ package com.doopp.gauss.server.processor;
 import com.doopp.gauss.server.dao.MovieDao;
 import com.doopp.gauss.server.entity.Movie;
 import com.doopp.gauss.server.util.IdWorker;
+import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import us.codecraft.webmagic.Page;
@@ -56,12 +57,7 @@ public class PiaohuaPageProcessor implements PageProcessor {
         String cover = page.getResultItems().get("cover");
         List<String> resource = page.getResultItems().get("resource");
 
-        for (String aResource : resource) {
-            System.out.print("\n" + aResource);
-        }
-
-        /*
-        if (name!=null && cover!=null) {
+        if (name!=null && cover!=null && resource!=null) {
             Movie movie = new Movie() {{
                 setId(idWorker.nextId());
                 setName(name);
@@ -69,11 +65,10 @@ public class PiaohuaPageProcessor implements PageProcessor {
                 setType(type);
                 setFrom_url(from_url);
                 setIntro("");
-                setDownload_links(resource_html);
+                setResources((new Gson()).toJson(resource));
             }};
             movieDao.create(movie);
         }
-        */
     }
 
     @Override
@@ -82,6 +77,6 @@ public class PiaohuaPageProcessor implements PageProcessor {
     }
 
     public void run() {
-        Spider.create(injector.getInstance(PiaohuaPageProcessor.class)).addUrl("https://www.piaohua.com/").thread(5).run();
+        Spider.create(injector.getInstance(PiaohuaPageProcessor.class)).addUrl("https://www.piaohua.com/").thread(1000).run();
     }
 }

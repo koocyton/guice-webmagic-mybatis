@@ -16,7 +16,7 @@ public interface MovieDao {
     @Select("SELECT count(*) FROM `movie_data` LIMIT 1")
     Long count();
 
-    @Insert("INSERT INTO `movie_data` (`id`, `name`, `cover`, `type`, `intro`, `from_url`, `download_links`) VALUES (${id}, #{name}, #{cover}, #{type}, #{intro}, #{from_url}, #{download_links})")
+    @Insert("INSERT INTO `movie_data` (`id`, `name`, `cover`, `type`, `intro`, `from_url`, `resources`) VALUES (${id}, #{name}, #{cover}, #{type}, #{intro}, #{from_url}, #{resources})")
     void create(Movie movie);
 
     // @Delete("DELETE FROM `user` WHERE id=${id,jdbcType=BIGINT}")
