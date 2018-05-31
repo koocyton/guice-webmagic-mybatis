@@ -10,6 +10,7 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.selector.Html;
 
 import java.util.List;
 
@@ -28,47 +29,74 @@ public class DyttPageProcessor implements PageProcessor {
 
     @Override
     public void process(Page page) {
-//        // https://www.piaohua.com/html/kehuan/2018/0420/33577.html
-//        // page.addTargetRequests(page.getHtml().links().regex("(https://www\\.piaohua\\.com/\\w+/\\w+/\\d+/\\d+/\\d+\\.html)").all());
-//        page.addTargetRequests(page.getHtml().links().regex("(https://www\\.piaohua\\.com/html/\\w+/.+)").all());
-//        // page.addTargetRequests(page.getHtml().links().all());
-//
-//        // https://www.piaohua.com/html/kehuan/2018/0518/33697.html
-//        page.putField("type", page.getUrl().regex("https://www\\.piaohua\\.com/html/(\\w+)/.+").toString());
-//        // page.putField("author", page.getUrl().regex("https://www\\.piaohua\\.com/(\\w+)/.*").toString());
-//
-//        // <title>陆地空谷下载_迅雷下载_免费下载_飘花电影网</title>
-//        page.putField("name", page.getHtml().regex("<title>(.+)下载_迅雷.+</title>").toString());
-//        // page.putField("name", page.getHtml().xpath("//h1[@class='public']/strong/a/text()").toString());
-//        if (page.getResultItems().get("name")==null){
-//            page.setSkip(true);
-//        }
-//        // page.putField("readme", page.getHtml().xpath("//div[@id='readme']/tidyText()"));
-//
-//        // 下载地址和剧情：<br />
-//        // <img border="0" src="http://img04.taobaocdn.com/imgextra/i4/229823360/T2VAjUXddaXXXXXXXX_!!229823360.jpg" /><br />
-//        page.putField("cover", page.getHtml().regex("<div id=\"showinfo\" .+?<img [^>]+ src=\"([^\"]+)\"").toString());
-//        // page.putField("cover", page.getHtml().xpath("//div[@id='showinfo']/img/@src"));
-//        page.putField("resource", page.getHtml().regex("<a href=\"([magnet|ftp][^\"]+)\"").all());
+        // http://dytt8.net/html/gndy/dyzz/20180529/56914.html
+        // page.addTargetRequests(page.getHtml().links().regex("(https://www\\.piaohua\\.com/\\w+/\\w+/\\d+/\\d+/\\d+\\.html)").all());
+        page.addTargetRequests(page.getHtml().links().regex("(/html/\\w+/\\w+/\\d+/\\d+\\.html)").all());
 
-        String from_url = page.getUrl().get();
-        String name = page.getResultItems().get("name");
-        String type = page.getResultItems().get("type");
-        String cover = page.getResultItems().get("cover");
-        List<String> resource = page.getResultItems().get("resource");
-
-        if (name!=null && cover!=null && resource!=null) {
-            Movie movie = new Movie() {{
-                setId(idWorker.nextId());
-                setName(name);
-                setCover(cover);
-                setType(type);
-                setFrom_url(from_url);
-                setIntro("");
-                setResources((new Gson()).toJson(resource));
-            }};
-            movieDao.create(movie);
+        // <title>2018年喜剧《萌犬好声音3》BD国英双语双字幕迅雷下载_电影天堂</title>
+        page.putField("name", page.getHtml().regex("<title>[^《]+《([^》]+)》[^<]+</title>").toString());
+        if (page.getResultItems().get("name")==null){
+            page.setSkip(true);
         }
+
+        // cover
+        page.putField("cover", page.getHtml().regex("<!--Content Start-->.+?<img[^>]+src=\"([^\"]+)\"").toString());
+
+        // get film type
+        page.putField("type", page.getUrl().regex("/html/(\\w+)/\\w+/\\d+/\\d+\\.html").toString());
+
+        // <br />◎译　　名　The First Stab of The Datang <br />◎片　　名　大唐第一刺局 <br />◎年　　代　2018 <br />◎产　　地　中国
+        // <br />◎类　　别　动作/悬疑/武侠 <br />◎语　　言　普通话 <br />◎字　　幕　中文
+        // <br />◎上映日期　2018-05-30(中国) <br />◎文件格式　x264 + aac <br />◎视频尺寸　1920 x 816
+        // <br />◎文件大小　1CD <br />◎片　　长　65分钟 <br />◎导　　演　赵聪 <br />
+        page.putField("translate_name", page.getHtml().regex("◎译　　名　([^<]+)").toString());
+        page.putField("film_name", page.getHtml().regex("◎片　　名　([^<]+)").toString());
+        page.putField("years", page.getHtml().regex("◎年　　代　([^<]+)").toString());
+        page.putField("origin_place", page.getHtml().regex("◎产　　地　([^<]+)").toString());
+        page.putField("category", page.getHtml().regex("◎类　　别　([^<]+)").toString());
+        page.putField("language", page.getHtml().regex("◎语　　言　([^<]+)").toString());
+        page.putField("subtitle", page.getHtml().regex("◎字　　幕　([^<]+)").toString());
+        page.putField("release_date", page.getHtml().regex("◎上映日期　([^<]+)").toString());
+        page.putField("video_format", page.getHtml().regex("◎文件格式　([^<]+)").toString());
+        page.putField("video_size", page.getHtml().regex("◎视频尺寸　([^<]+)").toString());
+        page.putField("file_size", page.getHtml().regex("◎文件大小　([^<]+)").toString());
+        page.putField("time_length", page.getHtml().regex("◎片　　长　([^<]+)").toString());
+        page.putField("director", page.getHtml().regex("◎导　　演　([^<]+)").toString());
+        // ◎主　　演　李思捷 Sze-Chit Lee <br />　　　　　　狄龙 Lung Ti <br />　　　　　　元秋 Qiu Yuen <br />　　　　　　钱小豪 Siu-hou Chin <br />　　　　　　林敏骢 Man-Chung Lam <br />　　　　　　苏玉华 Yuk-Wah So <br />　　　　　　罗家英 Kar-Ying Law <br />　　　　　　廖伟雄 Wai Hung Liu <br />　　　　　　钱莹 fion <br />　　　　　　李俊毅 Junyi Li <br />
+        page.putField("actor_list", page.getHtml().regex("◎主　　演　(.+)<br><br>◎简　　介").toString());
+        if (page.getResultItems().get("actor_list")!=null) {
+            Html actor_html = new Html("<br>　　　　　　" + page.getResultItems().get("actor_list"));
+            // System.out.print("\n>>>\n" + actor_html + "\n>>>\n");
+            page.putField("actors", actor_html.regex("<br>　+([^\\n]+) ").all());
+        }
+
+        // 简介
+        page.putField("intro", page.getHtml().regex("◎简　　介 <br><br>　+(.+?)<br><br>").toString());
+        // 截图
+        page.putField("screenshot", page.getHtml().regex("◎简　　介.+<img[^>]+src=\"([^\"]+)\".+下载地址").toString());
+        // 下载地址
+        page.putField("resource", page.getHtml().regex("<a href=\"([magnet|ftp][^\"]+)\"").all());
+
+//        page.putField("name", page.getHtml().xpath("//h1[@class='public']/strong/a/text()").toString());
+
+//        String from_url = page.getUrl().get();
+//        String name = page.getResultItems().get("name");
+//        String type = page.getResultItems().get("type");
+//        String cover = page.getResultItems().get("cover");
+//        List<String> resource = page.getResultItems().get("resource");
+//
+//        if (name!=null && cover!=null && resource!=null) {
+//            Movie movie = new Movie() {{
+//                setId(idWorker.nextId());
+//                setName(name);
+//                setCover(cover);
+//                setType(type);
+//                setFrom_url(from_url);
+//                setIntro("");
+//                setResources((new Gson()).toJson(resource));
+//            }};
+//            movieDao.create(movie);
+//        }
     }
 
     @Override
@@ -77,6 +105,6 @@ public class DyttPageProcessor implements PageProcessor {
     }
 
     public void run() {
-        Spider.create(injector.getInstance(DyttPageProcessor.class)).addUrl("http://www.dytt8.net/").thread(1000).run();
+        Spider.create(injector.getInstance(DyttPageProcessor.class)).addUrl("http://dytt8.net/").thread(1).run();
     }
 }

@@ -5,7 +5,6 @@ import com.doopp.gauss.server.module.ApplicationModule;
 import com.doopp.gauss.server.application.ApplicationProperties;
 import com.doopp.gauss.server.database.HikariDataSourceProvider;
 import com.doopp.gauss.server.processor.DyttPageProcessor;
-import com.doopp.gauss.server.processor.PiaohuaPageProcessor;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
@@ -21,8 +20,8 @@ public class KTApplication {
                 new myBatisModule(),
                 new ApplicationModule()
         );
-        final PiaohuaPageProcessor processor = injector.getInstance(PiaohuaPageProcessor.class);
-        processor.run();
+        // final PiaohuaPageProcessor processor = injector.getInstance(PiaohuaPageProcessor.class);
+        // processor.run();
         final DyttPageProcessor processor2 = injector.getInstance(DyttPageProcessor.class);
         processor2.run();
     }
