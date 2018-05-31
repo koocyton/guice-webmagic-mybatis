@@ -80,9 +80,9 @@ public class DyttPageProcessor implements PageProcessor {
         // page.putField("name", page.getHtml().xpath("//h1[@class='public']/strong/a/text()").toString());
 
         String name = page.getResultItems().get("name");
-        //String first_category = page.getResultItems().get("type");
-        //String second_category = page.getResultItems().get("type");
-        //String third_category = page.getResultItems().get("type");
+        String first_category = page.getResultItems().get("type");
+        String second_category = page.getResultItems().get("type");
+        String third_category = page.getResultItems().get("type");
         String cover = page.getResultItems().get("cover");
         String publish_date = page.getResultItems().get("publish_date");
         String translate_name = page.getResultItems().get("translate_name");
