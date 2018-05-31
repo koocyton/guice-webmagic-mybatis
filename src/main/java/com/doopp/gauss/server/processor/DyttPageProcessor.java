@@ -43,7 +43,7 @@ public class DyttPageProcessor implements PageProcessor {
         page.putField("cover", page.getHtml().regex("<!--Content Start-->.+?<img[^>]+src=\"([^\"]+)\"").toString());
 
         // get film type
-        page.putField("type", page.getUrl().regex("/html/(\\w+)/\\w+/\\d+/\\d+\\.html").toString());
+        page.putField("publish_date", page.getUrl().regex("/html/\\w+/\\w+/(\\d+)/\\d+\\.html").toString());
 
         // <br />◎译　　名　The First Stab of The Datang <br />◎片　　名　大唐第一刺局 <br />◎年　　代　2018 <br />◎产　　地　中国
         // <br />◎类　　别　动作/悬疑/武侠 <br />◎语　　言　普通话 <br />◎字　　幕　中文
@@ -66,7 +66,6 @@ public class DyttPageProcessor implements PageProcessor {
         page.putField("actor_list", page.getHtml().regex("◎主　　演　(.+)<br><br>◎简　　介").toString());
         if (page.getResultItems().get("actor_list")!=null) {
             Html actor_html = new Html("<br>　　　　　　" + page.getResultItems().get("actor_list"));
-            // System.out.print("\n>>>\n" + actor_html + "\n>>>\n");
             page.putField("actors", actor_html.regex("<br>　+([^\\n]+) ").all());
         }
 
@@ -75,16 +74,34 @@ public class DyttPageProcessor implements PageProcessor {
         // 截图
         page.putField("screenshot", page.getHtml().regex("◎简　　介.+<img[^>]+src=\"([^\"]+)\".+下载地址").toString());
         // 下载地址
-        page.putField("resource", page.getHtml().regex("<a href=\"([magnet|ftp][^\"]+)\"").all());
+        page.putField("download_links", page.getHtml().regex("<a href=\"([magnet|ftp][^\"]+)\"").all());
 
-//        page.putField("name", page.getHtml().xpath("//h1[@class='public']/strong/a/text()").toString());
+        // xpath example
+        // page.putField("name", page.getHtml().xpath("//h1[@class='public']/strong/a/text()").toString());
 
-//        String from_url = page.getUrl().get();
-//        String name = page.getResultItems().get("name");
-//        String type = page.getResultItems().get("type");
-//        String cover = page.getResultItems().get("cover");
-//        List<String> resource = page.getResultItems().get("resource");
-//
+        String name = page.getResultItems().get("name");
+        //String first_category = page.getResultItems().get("type");
+        //String second_category = page.getResultItems().get("type");
+        //String third_category = page.getResultItems().get("type");
+        String cover = page.getResultItems().get("cover");
+        String publish_date = page.getResultItems().get("publish_date");
+        String translate_name = page.getResultItems().get("translate_name");
+        String film_name = page.getResultItems().get("film_name");
+        String years = page.getResultItems().get("years");
+        String origin_place = page.getResultItems().get("origin_place");
+        String category = page.getResultItems().get("category");
+        String language = page.getResultItems().get("language");
+        String subtitle = page.getResultItems().get("subtitle");
+        String release_date = page.getResultItems().get("release_date");
+        String video_format = page.getResultItems().get("video_format");
+        String video_size = page.getResultItems().get("video_size");
+        String file_size = page.getResultItems().get("file_size");
+        String time_length = page.getResultItems().get("time_length");
+        String director = page.getResultItems().get("director");
+        List<String> actors = page.getResultItems().get("actors");
+        List<String> download_links = page.getResultItems().get("download_links");
+        String from_url = page.getUrl().get();
+
 //        if (name!=null && cover!=null && resource!=null) {
 //            Movie movie = new Movie() {{
 //                setId(idWorker.nextId());
