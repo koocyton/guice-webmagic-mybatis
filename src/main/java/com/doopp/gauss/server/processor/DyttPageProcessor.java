@@ -81,6 +81,7 @@ public class DyttPageProcessor implements PageProcessor {
 
         String name = page.getResultItems().get("name");
         String type = "movie";
+        String intro = page.getResultItems().get("intro");
         String first_category = page.getResultItems().get("type");
         String second_category = page.getResultItems().get("type");
         String third_category = page.getResultItems().get("type");
@@ -88,7 +89,7 @@ public class DyttPageProcessor implements PageProcessor {
         String publish_date = page.getResultItems().get("publish_date");
         String translate_name = page.getResultItems().get("translate_name");
         String film_name = page.getResultItems().get("film_name");
-        String years = page.getResultItems().get("years");
+        String release_age = page.getResultItems().get("years");
         String origin_place = page.getResultItems().get("origin_place");
         String category = page.getResultItems().get("category");
         String language = page.getResultItems().get("language");
@@ -103,18 +104,36 @@ public class DyttPageProcessor implements PageProcessor {
         List<String> download_links = page.getResultItems().get("download_links");
         String from_url = page.getUrl().get();
 
-//        if (name!=null && cover!=null && resource!=null) {
-//            Movie movie = new Movie() {{
-//                setId(idWorker.nextId());
-//                setName(name);
-//                setCover(cover);
-//                setType(type);
-//                setFrom_url(from_url);
-//                setIntro("");
-//                setResources((new Gson()).toJson(resource));
-//            }};
-//            movieDao.create(movie);
-//        }
+        if (name!=null && cover!=null && download_links!=null) {
+            Movie movie = new Movie() {{
+                setId(idWorker.nextId());
+                setName(name);
+                setCover(cover);
+                setType(type);
+                setFrom_url(from_url);
+                setIntro(intro);
+                setFirst_category(first_category);
+                setSecond_category(second_category);
+                setThird_category(third_category);
+                setPublish_date(publish_date);
+                setTranslate_name(translate_name);
+                setFilm_name(film_name);
+                setRelease_age(release_age);
+                setOrigin_place(origin_place);
+                setCategory(category);
+                setLanguage(language);
+                setSubtitle(subtitle);
+                setRelease_date(release_date);
+                setVideo_format(video_format);
+                setVideo_size(video_size);
+                setFile_size(file_size);
+                setTime_length(time_length);
+                setDirector(director);
+                setActors((new Gson()).toJson(actors));
+                setDownload_links((new Gson()).toJson(download_links));
+            }};
+            movieDao.create(movie);
+        }
     }
 
     @Override

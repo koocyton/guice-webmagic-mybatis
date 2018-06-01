@@ -7,16 +7,19 @@ import java.util.List;
 
 public interface MovieDao {
 
-    @Select("SELECT * FROM `movie_data` WHERE name=#{name,jdbcType=VARCHAR} LIMIT 1")
+    @Select("SELECT * FROM `data_film` WHERE name=#{name,jdbcType=VARCHAR} LIMIT 1")
     List<Movie> fetchListByName(String name);
 
-    @Select("SELECT * FROM `movie_data` WHERE id=#{id,jdbcType=BIGINT} LIMIT 1")
+    @Select("SELECT * FROM `data_film` WHERE id=#{id,jdbcType=BIGINT} LIMIT 1")
     Movie fetchById(long id);
 
     @Select("SELECT count(*) FROM `movie_data` LIMIT 1")
     Long count();
 
-    @Insert("INSERT INTO `movie_data` (`id`, `name`, `cover`, `type`, `intro`, `from_url`, `resources`) VALUES (${id}, #{name}, #{cover}, #{type}, #{intro}, #{from_url}, #{resources})")
+    @Insert("INSERT INTO `data_film` " +
+            "(`id`, `name`, `cover`, `type`, `intro`, `from_url`, `resources`) " +
+            "VALUES " +
+            "(${id}, #{name}, #{cover}, #{type}, #{intro}, #{from_url}, #{resources})")
     void create(Movie movie);
 
     // @Delete("DELETE FROM `user` WHERE id=${id,jdbcType=BIGINT}")
