@@ -17,9 +17,9 @@ public interface MovieDao {
     Long count();
 
     @Insert("INSERT INTO `data_film` " +
-            "(`id`, `name`, `cover`, `type`, `intro`, `from_url`, `resources`) " +
+            "(`id`, `name`, `type`, `first_category`, `second_category`, `third_category`, `cover`, `publish_date`, `translate_name`, `film_name`, `release_age`, `origin_place`, `category`, `language`, `subtitle`, `release_date`, `video_format`, `video_size`, `file_size`, `time_length`, `director`, `actors`, `download_links`, `from_url`, `score`, `like`, `download_sum`, `browse_sum`) " +
             "VALUES " +
-            "(${id}, #{name}, #{cover}, #{type}, #{intro}, #{from_url}, #{resources})")
+            "(${id}, #{name}, #{type}, #{first_category}, #{second_category}, #{third_category}, #{cover}, #{publish_date}, #{translate_name}, #{film_name}, #{release_age}, #{origin_place}, #{category}, #{language}, #{subtitle}, #{release_date}, #{video_format}, #{video_size}, #{file_size}, #{time_length}, #{director}, #{actors}, #{download_links}, #{from_url}, 0, 0, 0, 0)")
     void create(Movie movie);
 
     // @Delete("DELETE FROM `user` WHERE id=${id,jdbcType=BIGINT}")

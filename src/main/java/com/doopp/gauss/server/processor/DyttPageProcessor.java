@@ -80,11 +80,11 @@ public class DyttPageProcessor implements PageProcessor {
         // page.putField("name", page.getHtml().xpath("//h1[@class='public']/strong/a/text()").toString());
 
         String name = page.getResultItems().get("name");
-        String type = "movie";
+        String type = "video";
         String intro = page.getResultItems().get("intro");
-        String first_category = page.getResultItems().get("type");
-        String second_category = page.getResultItems().get("type");
-        String third_category = page.getResultItems().get("type");
+        String first_category = "";
+        String second_category = "";
+        String third_category = "";
         String cover = page.getResultItems().get("cover");
         String publish_date = page.getResultItems().get("publish_date");
         String translate_name = page.getResultItems().get("translate_name");
@@ -142,6 +142,6 @@ public class DyttPageProcessor implements PageProcessor {
     }
 
     public void run() {
-        Spider.create(injector.getInstance(DyttPageProcessor.class)).addUrl("http://dytt8.net/").thread(1).run();
+        Spider.create(injector.getInstance(DyttPageProcessor.class)).addUrl("http://dytt8.net/").thread(10).run();
     }
 }
