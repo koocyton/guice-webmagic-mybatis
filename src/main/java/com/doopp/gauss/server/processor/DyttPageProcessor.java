@@ -56,7 +56,7 @@ public class DyttPageProcessor implements PageProcessor {
         page.putField("category", page.getHtml().regex("◎类　　别　([^<]+)").toString());
         page.putField("language", page.getHtml().regex("◎语　　言　([^<]+)").toString());
         page.putField("subtitle", page.getHtml().regex("◎字　　幕　([^<]+)").toString());
-        page.putField("release_date", page.getHtml().regex("◎上映日期　([^<]+)").toString());
+        page.putField("release_date", page.getHtml().regex("◎上映日期　(\\d{4}-\\d{2}-\\d{2})").toString());
         page.putField("video_format", page.getHtml().regex("◎文件格式　([^<]+)").toString());
         page.putField("video_size", page.getHtml().regex("◎视频尺寸　([^<]+)").toString());
         page.putField("file_size", page.getHtml().regex("◎文件大小　([^<]+)").toString());
@@ -104,6 +104,8 @@ public class DyttPageProcessor implements PageProcessor {
         List<String> download_links = page.getResultItems().get("download_links");
         String from_url = page.getUrl().get();
 
+        String release_date2 = release_date==null ? "1970-01-01" : release_date;
+
         if (name!=null && cover!=null && download_links!=null) {
             Movie movie = new Movie() {{
                 setId(idWorker.nextId());
@@ -123,7 +125,7 @@ public class DyttPageProcessor implements PageProcessor {
                 setCategory(category);
                 setLanguage(language);
                 setSubtitle(subtitle);
-                setRelease_date(release_date);
+                setRelease_date(release_date2);
                 setVideo_format(video_format);
                 setVideo_size(video_size);
                 setFile_size(file_size);
