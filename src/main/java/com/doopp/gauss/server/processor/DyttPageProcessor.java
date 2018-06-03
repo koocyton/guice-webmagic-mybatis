@@ -48,12 +48,16 @@ public class DyttPageProcessor implements PageProcessor {
         // xpath example
         // page.putField("name", page.getHtml().xpath("//h1[@class='public']/strong/a/text()").toString());
 
-        page.putField("test_category", page.getHtml().regex("◎类　　别　([^<]+)").toString());
-        if (page.getResultItems().get("test_category")==null){
-            match2(page);
+        page.putField("test_category1", page.getHtml().regex("◎类　　别　([^<]+)").toString());
+        page.putField("test_category2", page.getHtml().regex("【类    　别】：([^<]+)").toString());
+        if (page.getResultItems().get("test_category1")==null && page.getResultItems().get("test_category2")==null){
+            match3(page);
+        }
+        else if (page.getResultItems().get("test_category2")==null) {
+            match1(page);
         }
         else {
-            match1(page);
+            match2(page);
         }
 
         String name = page.getResultItems().get("name");
@@ -67,6 +71,7 @@ public class DyttPageProcessor implements PageProcessor {
         String translate_name = page.getResultItems().get("translate_name");
         String film_name = page.getResultItems().get("film_name");
         String release_age = page.getResultItems().get("years");
+        String release_age2 = page.getResultItems().get("years2");
         String origin_place = page.getResultItems().get("origin_place");
         String category = page.getResultItems().get("category");
         String language = page.getResultItems().get("language");
@@ -95,7 +100,7 @@ public class DyttPageProcessor implements PageProcessor {
                 setPublish_date(publish_date==null ? "" : publish_date);
                 setTranslate_name(translate_name==null ? "" : translate_name);
                 setFilm_name(film_name==null ? "" : film_name);
-                setRelease_age(release_age==null ? "" : release_age);
+                setRelease_age(release_age==null ? release_age2 : release_age);
                 setOrigin_place(origin_place==null ? "" : origin_place);
                 setCategory(category==null ? "" : category);
                 setLanguage(language==null ? "" : language);
@@ -121,7 +126,8 @@ public class DyttPageProcessor implements PageProcessor {
         // <br />◎文件大小　1CD <br />◎片　　长　65分钟 <br />◎导　　演　赵聪 <br />
         page.putField("translate_name", page.getHtml().regex("◎译　　名　([^<]+)").toString());
         page.putField("film_name", page.getHtml().regex("◎片　　名　([^<]+)").toString());
-        page.putField("years", page.getHtml().regex("◎年　　代　([^<]+)").toString());
+        page.putField("years", page.getHtml().regex("◎年　　代　(\\d{4})").toString());
+        page.putField("years2", page.getHtml().regex("◎上映日期　(\\d{4})").toString());
         page.putField("origin_place", page.getHtml().regex("◎产　　地　([^<]+)").toString());
         page.putField("category", page.getHtml().regex("◎类　　别　([^<]+)").toString());
         page.putField("language", page.getHtml().regex("◎语　　言　([^<]+)").toString());
@@ -152,18 +158,16 @@ public class DyttPageProcessor implements PageProcessor {
         page.putField("translate_name", page.getHtml().regex("【译    　名】： ([^<]+)").toString());
         page.putField("film_name", page.getHtml().regex("【原    　名】： ([^<]+)").toString());
         page.putField("years", page.getHtml().regex("【年    　代】： (\\d{4})").toString());
+        page.putField("years2", page.getHtml().regex("【首    　播】：(\\d{4})").toString());
         page.putField("origin_place", page.getHtml().regex("【国    　家】：([^<]+)").toString());
         page.putField("category", page.getHtml().regex("【类    　别】： ([^<]+)").toString());
         page.putField("language", page.getHtml().regex("【语    　言】： ([^<]+)").toString());
         page.putField("subtitle", page.getHtml().regex("【字    　幕】：([^<]+)").toString());
         page.putField("release_date", page.getHtml().regex("【首    　播】：(\\d{4}-\\d{2}-\\d{2})").toString());
-        page.putField("video_format", page.getHtml().regex("◎文件格式　([^<]+)").toString());
-        page.putField("video_size", page.getHtml().regex("◎视频尺寸　([^<]+)").toString());
-        page.putField("file_size", page.getHtml().regex("◎文件大小　([^<]+)").toString());
         page.putField("time_length", page.getHtml().regex("【片    　长】： ([^<]+)").toString());
         page.putField("director", page.getHtml().regex("【导    　演】：([^【]+)【").toString());
         // ◎主　　演　李思捷 Sze-Chit Lee <br />　　　　　　狄龙 Lung Ti <br />　　　　　　元秋 Qiu Yuen <br />　　　　　　钱小豪 Siu-hou Chin <br />　　　　　　林敏骢 Man-Chung Lam <br />　　　　　　苏玉华 Yuk-Wah So <br />　　　　　　罗家英 Kar-Ying Law <br />　　　　　　廖伟雄 Wai Hung Liu <br />　　　　　　钱莹 fion <br />　　　　　　李俊毅 Junyi Li <br />
-        page.putField("actor_list", page.getHtml().regex("【演    　员】：(.+)<br><br>◎简　　介").toString());
+        page.putField("actor_list", page.getHtml().regex("【演    　员】：(.+)<br><br>【").toString());
         if (page.getResultItems().get("actor_list")!=null) {
             Html actor_html = new Html("<br>　　　　　　" + page.getResultItems().get("actor_list"));
             page.putField("actors", actor_html.regex("<br>　+([^\\n]+) ").all());
@@ -173,6 +177,34 @@ public class DyttPageProcessor implements PageProcessor {
         page.putField("intro", page.getHtml().regex("【简    　介】：<br><br>　+(.+?)<br><br>").toString());
         // 截图
         page.putField("screenshot", page.getHtml().regex("【简    　介】：.+<img[^>]+src=\"([^\"]+)\".+下载地址").toString());
+        // 下载地址
+        page.putField("download_links", page.getHtml().regex("<a href=\"([magnet|ftp][^\"]+)\"").all());
+    }
+
+    private void match3(Page page) {
+
+        page.putField("translate_name", page.getHtml().regex("【译    　名】 ([^<]+)").toString());
+        page.putField("film_name", page.getHtml().regex("【原    　名】 ([^<]+)").toString());
+        page.putField("years", page.getHtml().regex("【年    　代】 (\\d{4})").toString());
+        page.putField("years2", page.getHtml().regex("【首    　播】 (\\d{4})").toString());
+        page.putField("origin_place", page.getHtml().regex("【国    　家】 ([^<]+)").toString());
+        page.putField("category", page.getHtml().regex("【类    　别】 ([^<]+)").toString());
+        page.putField("language", page.getHtml().regex("【语    　言】 ([^<]+)").toString());
+        page.putField("subtitle", page.getHtml().regex("【字    　幕】 ([^<]+)").toString());
+        page.putField("release_date", page.getHtml().regex("【首    　播】 (\\d{4}-\\d{2}-\\d{2})").toString());
+        page.putField("time_length", page.getHtml().regex("【片    　长】 ([^<]+)").toString());
+        page.putField("director", page.getHtml().regex("【导    　演】 ([^【]+)【").toString());
+        // ◎主　　演　李思捷 Sze-Chit Lee <br />　　　　　　狄龙 Lung Ti <br />　　　　　　元秋 Qiu Yuen <br />　　　　　　钱小豪 Siu-hou Chin <br />　　　　　　林敏骢 Man-Chung Lam <br />　　　　　　苏玉华 Yuk-Wah So <br />　　　　　　罗家英 Kar-Ying Law <br />　　　　　　廖伟雄 Wai Hung Liu <br />　　　　　　钱莹 fion <br />　　　　　　李俊毅 Junyi Li <br />
+        page.putField("actor_list", page.getHtml().regex("【演    　员】 [^【]+<br><br>【").toString());
+        if (page.getResultItems().get("actor_list")!=null) {
+            Html actor_html = new Html("<br>　　　　　　" + page.getResultItems().get("actor_list"));
+            page.putField("actors", actor_html.regex("<br>　+([^\\n]+) ").all());
+        }
+
+        // 简介
+        page.putField("intro", page.getHtml().regex("【简    　介】 <br><br>　+(.+?)<br><br>").toString());
+        // 截图
+        page.putField("screenshot", page.getHtml().regex("【简    　介】 .+<img[^>]+src=\"([^\"]+)\".+下载地址").toString());
         // 下载地址
         page.putField("download_links", page.getHtml().regex("<a href=\"([magnet|ftp][^\"]+)\"").all());
     }
@@ -229,4 +261,53 @@ public class DyttPageProcessor implements PageProcessor {
 
 　　山姆和迪安两兄弟将继续他们危机四伏的使命。他们遇到了最强劲的对手：the Devil。最终他们找出了方法迫使Lucifer重回地狱，结束了灾难，但是付出了惨痛的代价：山姆的生命。新一季将充满神秘和阴影，随着第五季的大灾难，天堂和地狱变得杂乱无章。怪物、天使和恶魔无秩序、混乱的到处游荡。迪安也不再从事追魔行动，并发誓再也不回来，回到了原先的生活。他遇到了从地狱逃出生天的山姆，两人重聚后发现他们再也回不到过去，他们的关系也和从前不一样了，一切都变了。
 
+
+
+
+【译    　名】 冰与火之歌：权力的游戏
+【原    　名】 Game.of.Thrones
+【年    　代】 2011-2016
+【国    　家】 美国
+【类    　别】 Drama | Fantasy
+【语    　言】 英语
+【首    　播】 2011年04月17日
+【电  视  台】 HBO
+【IMDB 评 分】 9.4/10 from 110,713 users
+【集    　数】 预计 10 集
+【片    　长】 平均 60 分钟
+【导    　演】 ·Alan Taylor   (6 episodes, 2011-2012)
+　　　　　　　 ·Brian Kirk   (3 episodes, 2011)
+　　　　　　　 ·Daniel Minahan   (3 episodes, 2011)
+　　　　　　　 ·Timothy Van Patten   (2 episodes, 2011)
+　　　　　　　 ·David Nutter   (2 episodes, 2012)
+　　　　　　　 ·David Petrarca   (2 episodes, 2012)
+【编    　剧】 ·David Benioff   (20 episodes, 2011-2012)
+　　　　　　　 ·George R.R. Martin   (20 episodes, 2011-2012)
+　　　　　　　 ·D.B. Weiss   (20 episodes, 2011-2012)
+　　　　　　　 ·Bryan Cogman   (2 episodes, 2011-2012)
+【演    　员】 ·Lena Headey ...  Cersei Lannister (12 episodes, 2011-2012)
+　　　　　　　 ·Jack Gleeson ...  Joffrey Baratheon (12 episodes, 2011-2012)
+　　　　　　　 ·Sean Bean ...  Eddard Stark (11 episodes, 2011-2012)
+　　　　　　　 ·Michelle Fairley ...  Catelyn Stark (11 episodes, 2011-2012)
+　　　　　　　 ·Emilia Clarke ...  Daenerys Targaryen (11 episodes, 2011-2012)
+　　　　　　　 ·Iain Glen ...  Ser Jorah Mormont (11 episodes, 2011-2012)
+　　　　　　　 ·Sophie Turner ...  Sansa Stark (11 episodes, 2011-2012)
+　　　　　　　 ·Maisie Williams ...  Arya Stark (11 episodes, 2011-2012)
+　　　　　　　 ·Alfie Allen ...  Theon Greyjoy (11 episodes, 2011-2012)
+　　　　　　　 ·Peter Dinklage ...  Tyrion Lannister (11 episodes, 2011-2012)
+　　　　　　　 ·Richard Madden ...  Robb Stark (10 episodes, 2011-2012)
+　　　　　　　 ·Nikolaj Coster-Waldau ...  Jaime Lannister (10 episodes, 2011-2012)
+　　　　　　　 ·Aidan Gillen ...  Petyr Baelish (10 episodes, 2011-2012)
+　　　　　　　 ·Kit Harington ...  Jon Snow (10 episodes, 2011-2012)
+　　　　　　　 ·Ron Donachie ...  Ser Rodrik Cassel (10 episodes, 2011-2012)
+
+【简    　介】
+
+　　《权力的游戏》这部电视剧将标志着正统史诗奇幻剧出现在电视网上这一里程碑时刻的到来。这部根据George R. R. Martin的系列畅销小说改编的影视剧，是由David Benioff（《特洛伊》的制片人）和D.B. Weiss（游戏《光晕》的编剧）担任制片。
+
+　　故事的整个世界与地球几乎相当，主要分为两片大陆。位于西面的是“日落国度”维斯特洛，面积约等于南美洲。位于东面的是一块面积、形状近似于亚欧大陆的陆地。
+
+　　故事的主线便发生在西方的形似不列颠岛的维斯特洛大陆上。由国王劳勃?拜拉席恩前往北地拜访他的好友：临冬城主暨北境统领艾德史塔克开始，渐渐展示了这片国度的全貌。单纯的国王，耿直的首相，各怀鬼胎的大臣，拥兵自重的四方诸侯，全国仅靠着一根细弦维系着表面的和平，而当弦断之时，国家再度陷入无尽的战乱之中。而更让人惊悚的：那些远古的传说和早已灭绝的生物，正重新回到这片土地。
+
+　　昔日的开国英雄，都成了权力游戏的牺牲者。如今他们尸骨未寒，群雄相继而起，纷纷僭越称王。天际一道血红色彗星，预示了毁灭和浩劫的降临。北境大军与兰尼斯特实力相互对峙，蓝礼的南境雄兵则不断朝君临开拔，还有动向不明的史坦尼斯，以及西北黑海之上的铁群岛诸民。戍守北疆的守夜人军团北 出长城，与境外蛮族一决生死。龙之母丹妮莉丝带着老弱残兵组成的卡拉萨，跟随彗星的轨迹，穿越茫茫洪荒，朝遥远渺茫的复国大业进发...凛冬将至，冷风渐起，且听一支冰与火之歌的赞歌。
  */
