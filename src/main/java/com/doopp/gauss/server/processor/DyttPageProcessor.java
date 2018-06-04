@@ -37,6 +37,7 @@ public class DyttPageProcessor implements PageProcessor {
         page.putField("name", page.getHtml().regex("<title>[^《]+《([^》]+)》[^<]+</title>").toString());
         if (page.getResultItems().get("name")==null){
             page.setSkip(true);
+            return;
         }
 
         // cover
@@ -49,7 +50,7 @@ public class DyttPageProcessor implements PageProcessor {
         // page.putField("name", page.getHtml().xpath("//h1[@class='public']/strong/a/text()").toString());
 
         page.putField("test_category1", page.getHtml().regex("◎类　　别　([^<]+)").toString());
-        page.putField("test_category2", page.getHtml().regex("【类    　别】：([^<]+)").toString());
+        /* page.putField("test_category2", page.getHtml().regex("【类    　别】：([^<]+)").toString());
         if (page.getResultItems().get("test_category1")==null && page.getResultItems().get("test_category2")==null){
             match3(page);
         }
@@ -58,7 +59,12 @@ public class DyttPageProcessor implements PageProcessor {
         }
         else {
             match2(page);
+        }*/
+        if (page.getResultItems().get("test_category1")==null){
+            page.setSkip(true);
+            return;
         }
+        match1(page);
 
         String name = page.getResultItems().get("name");
         String type = "video";
